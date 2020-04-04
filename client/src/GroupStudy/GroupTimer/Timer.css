@@ -1,0 +1,64 @@
+.timer {
+    font-size: 118px;
+    border: none;
+    display: inline-block;
+    width: 135px;
+    text-align: center;
+    background-color: #F6F5F6;
+    color: white;
+    background-color: transparent;
+    -moz-appearance: textfield;
+    font-family: 'Sen', sans-serif;
+    font-weight: 700;
+}
+
+.timer-backdrop {
+    margin-top: 100px;
+    padding: 50px;
+    width: 50%;
+    margin: auto;
+    margin-top: 100px;
+}
+
+/* .controls {
+    justify-content: space-between;
+    width: 20%;
+    margin: auto;
+    display: flex;
+} */
+
+
+.timer:disabled {
+    font-size: 118px;
+    border: none;
+    display: inline-block;
+    width: 135px;
+    text-align: center;
+    background-color: #F6F5F6;
+    color: white;
+    background-color: transparent;
+    -moz-appearance: textfield;
+    font-family: 'Sen', sans-serif;
+    font-weight: 700;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.colon {
+    font-size: 100px;
+    display: inline-block;
+    color: white;
+    height: auto;
+}
+
+.break {
+    color: red;
+}
+
+.Label {
+    color: black;
+    margin-bottom: auto;
+    font-weight: 400;
+}

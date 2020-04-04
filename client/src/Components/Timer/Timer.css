@@ -1,0 +1,88 @@
+.timer {
+    font-size: 118px;
+    border: none;
+    display: inline-block;
+    width: 135px;
+    text-align: center;
+    background-color: transparent;
+    -webkit-appearance: none;
+    color: white;
+    font-family: 'Sen', sans-serif;
+    font-weight: 600;
+}
+
+.timer-backdrop {
+    margin-top: 100px;
+    padding: 50px
+    background-color;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    width: 20%;
+    margin: auto;
+}
+
+.timer:disabled {
+    font-size: 118px;
+    border: none;
+    display: inline-block;
+    width: 135px;
+    text-align: center;
+    background-color: #F6F5F6;
+    color: white;
+    background-color: transparent;
+    -moz-appearance: textfield;
+    font-family: 'Sen', sans-serif;
+    font-weight: 600;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.colon {
+    font-size: 100px;
+    display: inline-block;
+    color: white;
+    height: auto;
+    font-family: 'Sen', sans-serif;
+    font-weight: bold;
+}
+
+.break {
+    font-family: 'Sen', sans-serif;
+    margin-bottom: auto;
+    color: red;
+    font-weight: bold;
+}
+
+.status-box {
+    background-color: #E0E0E0;
+    border: 1px solid #E0E0E0;
+    border-radius: 20px;
+    padding: 15px;
+    width: 35%;
+    align-self: center;
+    margin: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.switch-label {
+    font-family: 'Sen', sans-serif;
+    margin-bottom: auto;
+    color: white;
+}
+.sub-controls {
+    justify-content: space-between;
+    width: 35%;
+    margin: auto;
+    display: flex;
+}
+
+.Label {
+    color: black;
+    margin-bottom: auto;
+    font-weight: 2000px;
+}

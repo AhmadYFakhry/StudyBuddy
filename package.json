@@ -1,0 +1,44 @@
+{
+  "name": "project-studybuddy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "group": " dotenv -e src/vars.env nodemon src/group/server.js",
+    "back": "dotenv -e src/vars.env nodemon src/app.js",
+    "client": "(cd client && npm run start)",
+    "start": "concurrently \"npm run group\" \"npm run back\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UTMCSC301/project-studybuddy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/UTMCSC301/project-studybuddy/issues"
+  },
+  "homepage": "https://github.com/UTMCSC301/project-studybuddy#readme",
+  "dependencies": {
+    "bcrypt": "^3.0.7",
+    "bootstrap": "^4.4.1",
+    "dotenv": "^8.2.0",
+    "dotenv-cli": "^3.1.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.8.11",
+    "nodemailer": "^6.4.6",
+    "react": "^16.12.0",
+    "react-bootstrap": "^1.0.0-beta.17",
+    "socket.io": "^2.3.0",
+    "uifx": "^2.0.7",
+     "concurrently": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}

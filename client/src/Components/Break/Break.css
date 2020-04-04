@@ -1,0 +1,23 @@
+  
+.break-interval-container {
+  width: 250px;
+  text-align: center;
+}
+
+.break-time-interval {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.break-time {
+margin: 0 20px;
+font-size: 2.2rem;
+font-weight: 500;
+}
+
+h4 {
+font-size: 2rem;
+color: #263646;
+margin-bottom: 10px;
+}
