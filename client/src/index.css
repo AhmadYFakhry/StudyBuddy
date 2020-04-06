@@ -10,20 +10,6 @@ body {
   background-attachment: fixed;
 }
 
-.MuiButton-contained {
-  margin: 7px 15px;
-}
-
-.btn {
-  margin: 7px 15px;
-
-}
-
-/* #droppable{
-  background: rgba(250,250,250,1);
-} */
-
-
 #editprofpag{
   margin-bottom: 1%;
 }
