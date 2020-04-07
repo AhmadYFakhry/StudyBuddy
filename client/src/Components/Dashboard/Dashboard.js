@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './Dashboard.css'
 import Timer from '../Timer/Timer'
 import SessionList from '../List/SessionList';
-import Button from '@material-ui/core/Button';
+import { Button, Grid } from '@material-ui/core';
 import FullScreen from 'react-request-fullscreen'
 import LogoutButton from '../LogoutButton/LogoutButton'
 
@@ -19,23 +19,23 @@ class Dashboard extends React.Component {
       timerMinute: 25,
       break: 5,
       session: 25,
-      counter : false,
+      counter: false,
       flipper: true,
       FullScreen: false,
     }
     this.backtoDash = this.backtoDash.bind(this);
   }
 
-  onFullScreenChange (isFullScreen) {
+  onFullScreenChange(isFullScreen) {
     this.setState({
       isFullScreen
     })
   }
-  requestOrExitFullScreen () {
+  requestOrExitFullScreen() {
     this.fullScreenRef.fullScreen()
   }
 
-  requestOrExitFullScreenByElement () {
+  requestOrExitFullScreenByElement() {
     this.elFullScreenRef.fullScreen(this.elRef)
   }
 
@@ -49,13 +49,13 @@ class Dashboard extends React.Component {
     try {
       const tk = this.getToken();
       const decoded = decode(tk);
-      if(decoded.exp < Date.now() / 1000) {
-          this.setState({loggedIn: false})
-        }
-        this.setState({loggedIn: true})
-      } catch (error) {
-        this.setState({loggedIn: false})
+      if (decoded.exp < Date.now() / 1000) {
+        this.setState({ loggedIn: false })
       }
+      this.setState({ loggedIn: true })
+    } catch (error) {
+      this.setState({ loggedIn: false })
+    }
   }
 
   backtoDash() {
@@ -67,22 +67,29 @@ class Dashboard extends React.Component {
       <div className="App">
         {/* <Navbar /> */}
         <div className="back-controls">
-          <Button variant="contained" onClick={this.backtoDash} >Go back</Button>
-          <LogoutButton></LogoutButton>
+          <Grid container spacing={3}>
+            <Grid item>
+              <Button variant="contained" onClick={this.backtoDash} >Go back</Button>
+            </Grid>
+            <Grid item>
+              <LogoutButton></LogoutButton>
+            </Grid>
+          </Grid>
         </div>
+
         <div className="timer-backdrop">
-          <Timer />    
-              <br></br>
-              <FullScreen ref={ref => { this.fullScreenRef = ref }} onFullScreenChange={this.onFullScreenChange.bind(this)}>
-                  <div className='rq'>
-                    <Button onClick={this.requestOrExitFullScreen.bind(this)} variant="contained">
-                    {!isFullScreen ? 'Go Fullscreen' : 'Exit FullScreen' }
-                    </Button>
-                  </div>
+          <Timer />
+          <br></br>
+          <FullScreen ref={ref => { this.fullScreenRef = ref }} onFullScreenChange={this.onFullScreenChange.bind(this)}>
+            <div className='rq'>
+              <Button onClick={this.requestOrExitFullScreen.bind(this)} variant="contained">
+                {!isFullScreen ? 'Go Fullscreen' : 'Exit FullScreen'}
+              </Button>
+            </div>
           </FullScreen>
         </div>
         <SessionList id="sessionList" ></SessionList>
-        </div>
+      </div>
     )
   }
 }

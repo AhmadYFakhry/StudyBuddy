@@ -1,7 +1,7 @@
 import React from 'react'
 import UIfx from 'uifx'
 import mp3File from './beep.mp3'
-import Button from '@material-ui/core/Button';
+import { Button, Grid } from '@material-ui/core';
 import { MdPlayArrow, MdPause, MdRefresh } from 'react-icons/md';
 import './Timer.css'
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -43,32 +43,32 @@ class Timer extends React.Component {
 
   componentDidMount() {
     this.socket.on('play', (id) => {
-      if(id === this.socket.id) {
+      if (id === this.socket.id) {
       } else {
         this.start();
       }
     });
     this.socket.on('pause', (id) => {
-      if(id === this.socket.id) {
+      if (id === this.socket.id) {
       } else {
         this.stop();
       }
     });
     this.socket.on('reset', (id) => {
-      if(id === this.socket.id) {
+      if (id === this.socket.id) {
       } else {
         this.reset();
       }
     });
     this.socket.on('switchModes', (id) => {
-      if(id === this.socket.id) {
+      if (id === this.socket.id) {
       } else {
         console.log("Test")
         this.switchMode();
       }
     });
     this.socket.on('switchContinue', (id) => {
-      if(id === this.socket.id) {
+      if (id === this.socket.id) {
       } else {
         console.log("Test")
         this.switchContinue();
@@ -89,21 +89,21 @@ class Timer extends React.Component {
     // else this.setState({
     //   minutes: "25"
     // });
-    if(this.state.break === true) {
+    if (this.state.break === true) {
       this.setState({
-          break: !this.state.break,
-        });
-        this.setState({
+        break: !this.state.break,
+      });
+      this.setState({
         minutes: "25"
-        });
-        return;
+      });
+      return;
     }
     else {
       this.setState({
         break: !this.state.break,
       });
       this.setState({
-      minutes: "05"
+        minutes: "05"
       });
       return;
     }
@@ -111,25 +111,25 @@ class Timer extends React.Component {
 
   updateMinutes(e) {
     let value = e.target.value;
-    if(value < 0) {
+    if (value < 0) {
       return;
     }
-    if( value.length > 2) {
+    if (value.length > 2) {
       return;
     }
-    this.setState({minutes: value});
+    this.setState({ minutes: value });
 
   }
   updateSeconds(e) {
     let value = e.target.value;
     console.log(value);
-    if(value < 0) {
+    if (value < 0) {
       return;
     }
-    if( value.length > 2) {
+    if (value.length > 2) {
       return;
     }
-    this.setState({seconds: value});
+    this.setState({ seconds: value });
   }
 
   tick() {
@@ -144,17 +144,18 @@ class Timer extends React.Component {
         seconds: "0" + this.state.seconds,
       })
     }
-    if (min < 10) {this.setState({
-      minutes: "0" + min,
-    })
+    if (min < 10) {
+      this.setState({
+        minutes: "0" + min,
+      })
     }
     if (min === 0 & sec === 0) {
-      if (this.state.continious) {this.notification.showNotification('Timer Complete. New timer starting!');}
-      else {this.notification.showNotification('Timer Complete. Start your new timer!');}
-      
+      if (this.state.continious) { this.notification.showNotification('Timer Complete. New timer starting!'); }
+      else { this.notification.showNotification('Timer Complete. Start your new timer!'); }
+
       this.stop();
       this.switchMode();
-      if(this.state.continious) {
+      if (this.state.continious) {
         this.start()
       }
     }
@@ -212,15 +213,15 @@ class Timer extends React.Component {
       sound: true,
       break: false
     });
-    this.setState({disabled: false})
+    this.setState({ disabled: false })
   }
 
   formatMinutes(e) {
     const value = e.target.value;
-    if( value.length >= 2) {
+    if (value.length >= 2) {
       return;
     }
-    if(value < 10) {
+    if (value < 10) {
       this.setState({
         minutes: "0" + value
       })
@@ -230,10 +231,10 @@ class Timer extends React.Component {
 
   formatSeconds(e) {
     const value = e.target.value;
-    if( value.length >= 2) {
+    if (value.length >= 2) {
       return;
     }
-    else if(value < 10) {
+    else if (value < 10) {
       this.setState({
         seconds: "0" + value
       })
@@ -249,39 +250,45 @@ class Timer extends React.Component {
 
   render() {
     return (
-      
+
       <section className="timer-backdrop">
-          <input onBlur={this.formatMinutes} disabled maxLength="2" max="99" className="timer" type="number" value={this.state.minutes} onChange={this.updateMinutes} />
-          <p className="colon">:</p>
-          <input onBlur={this.formatSeconds} disabled maxLength="2" max="59" className="timer" type="number" value={this.state.seconds} onChange={this.updateSeconds} />
-          <br />
-          <div className="controls">
+        <input onBlur={this.formatMinutes} disabled maxLength="2" max="99" className="timer" type="number" value={this.state.minutes} onChange={this.updateMinutes} />
+        <p className="colon">:</p>
+        <input onBlur={this.formatSeconds} disabled maxLength="2" max="59" className="timer" type="number" value={this.state.seconds} onChange={this.updateSeconds} />
+        <br />
+        <Grid container alignItems="center" justify="center" spacing={1}>
+          <Grid item spacing={1}>
             <Button variant="contained" ref="btn" onClick={this.handleClickPlay} disabled={this.state.disabled}>
-            <MdPlayArrow />
+              <MdPlayArrow />
             </Button>
+          </Grid>
+          <Grid item spacing={1}>
             <Button variant="contained" onClick={this.handleClickPause} disabled={!this.state.disabled}>
               <MdPause />
             </Button>
+          </Grid>
+          <Grid item spacing={1}>
             <Button variant="contained" onClick={this.handleClickReset}>
               <MdRefresh />
             </Button>
-          </div>
-          <br />
+          </Grid>
+        </Grid>
+        <br />
 
-            <Button variant="contained" ref="btn" onClick={this.handleSwitchModes} disabled={this.state.disabled}>Switch Modes {this.state.br}</Button>
-            <Notification ref={ref => (this.notification = ref)} />
-          <br />
-          <FormControlLabel
-              control={
-                <Switch
-                  checked={this.state.continious}
-                  onChange={this.handleSwitchContinue}
-                  name="checkedB"
-                  color="default"
-                />
-              }
-              label={<p className="switch-label">Continuous Mode {this.state.continious === true ? "Enabled": "Disabled"}</p>}
+        <Button variant="contained" ref="btn" onClick={this.handleSwitchModes} disabled={this.state.disabled}>Switch Modes {this.state.br}</Button>
+        <Notification ref={ref => (this.notification = ref)} />
+        <br />
+        <FormControlLabel
+          control={
+            <Switch
+              checked={this.state.continious}
+              onChange={this.handleSwitchContinue}
+              name="checkedB"
+              color="default"
             />
+          }
+          label={<p className="switch-label">Continuous Mode {this.state.continious === true ? "Enabled" : "Disabled"}</p>}
+        />
       </section>
     )
   }

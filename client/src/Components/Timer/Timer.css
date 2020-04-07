@@ -18,10 +18,7 @@
 }
 
 .controls {
-    display: flex;
-    justify-content: space-between;
-    width: 20%;
-    margin: auto;
+    width: 5%;
 }
 
 .timer:disabled {
