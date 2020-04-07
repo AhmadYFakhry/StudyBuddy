@@ -4,7 +4,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import axios from 'axios';
 import Auth from '../../HOC/Auth'
-import {Form} from 'react-bootstrap';
+import {Form, Col} from 'react-bootstrap';
 import './List.css'
 import Button from '@material-ui/core/Button';
 
@@ -242,7 +242,6 @@ deleteList(listId){ //delete the list permanently
             </Container>
           )}
         </Droppable>
-
       </DragDropContext>
     );
   }

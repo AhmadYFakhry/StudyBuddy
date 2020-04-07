@@ -8,6 +8,7 @@ import SessionList from '../List/SessionList';
 import Button from '@material-ui/core/Button';
 import FullScreen from 'react-request-fullscreen'
 import LogoutButton from '../LogoutButton/LogoutButton'
+import Navbar from '../Navbar/Navbar';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -65,11 +66,11 @@ class Dashboard extends React.Component {
     const { isFullScreen } = this.state
     return (
       <div className="App">
-        {/* <Navbar /> */}
-        <div className="back-controls">
+        <Navbar />
+        {/* <div className="back-controls">
           <Button variant="contained" onClick={this.backtoDash} >Go back</Button>
           <LogoutButton></LogoutButton>
-        </div>
+        </div> */}
         <div className="timer-backdrop">
           <Timer />    
               <br></br>
