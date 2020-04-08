@@ -1,7 +1,7 @@
 import React from 'react'
 import './AuthPage.css'
 import axios from 'axios';
-import Cookies from 'universal-cookie';
+import Cookies from 'js-cookie';
 import { Container, Alert, Modal, Button, Spinner } from "react-bootstrap";
 import LoginForm from '../../Components/Login/Login.js'
 
@@ -36,10 +36,10 @@ class AuthPage extends React.Component {
         email: this.state.email,
         password: this.state.password
       })
-      const cookies = new Cookies();
-      cookies.set('Authorization', 'Bearer ' + res.data.tk);
-      this.props.history.push('/dashboard');
+      Cookies.set('Authorization', 'Bearer ' + res.data.tk, { path: '' });
+      window.location.href = "/dashboard"
     } catch (error) {
+      console.log(error);
       this.setState({ alert: <Alert variant="warning">Unable to login! Could not find a matching email and password</Alert> })
     }
   }

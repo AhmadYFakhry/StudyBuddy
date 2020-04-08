@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import Auth from '../../HOC/Auth';
-import Cookies from 'universal-cookie';
+import Cookies from 'js-cookie';
 
 class LogoutButton extends React.Component {
 
@@ -11,23 +11,22 @@ class LogoutButton extends React.Component {
         this.props = props;
         this.handleLogout = this.handleLogout.bind(this);
     }
-    
-     async handleLogout () {
+
+    async handleLogout() {
         const tk = Auth.getToken();
         try {
             axios.defaults.headers = {
                 Authorization: tk
-            }        
-            console.log(tk);
+            }
             await axios.post('http://localhost:8000/user/logout');
-            const cookies = new Cookies();
-            cookies.remove('Authorization');
-            window.location.href="/";
+            window.location.href = "/";
+            const cookie = Cookies.remove('Authorization', { path: '/' });
+            console.log(cookie);
         } catch (error) {
             console.log(error);
         }
     }
-    render () {
+    render() {
 
         return (<Button variant="contained" onClick={this.handleLogout}>Logout</Button>);
     }

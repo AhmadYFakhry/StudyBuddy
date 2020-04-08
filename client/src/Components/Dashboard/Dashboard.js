@@ -1,5 +1,5 @@
 import React from 'react'
-import Cookies from 'universal-cookie'
+import Cookies from 'js-cookie'
 import decode from 'jwt-decode'
 import "bootstrap/dist/css/bootstrap.min.css";
 import './Dashboard.css'
@@ -7,7 +7,7 @@ import Timer from '../Timer/Timer'
 import SessionList from '../List/SessionList';
 import { Button, Grid } from '@material-ui/core';
 import FullScreen from 'react-request-fullscreen'
-import LogoutButton from '../LogoutButton/LogoutButton'
+import Navbar from '../Navbar/Navbar';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -65,18 +65,7 @@ class Dashboard extends React.Component {
     const { isFullScreen } = this.state
     return (
       <div className="App">
-        {/* <Navbar /> */}
-        <div className="back-controls">
-          <Grid container spacing={3}>
-            <Grid item>
-              <Button variant="contained" onClick={this.backtoDash} >Go back</Button>
-            </Grid>
-            <Grid item>
-              <LogoutButton></LogoutButton>
-            </Grid>
-          </Grid>
-        </div>
-
+        <Navbar />
         <div className="timer-backdrop">
           <Timer />
           <br></br>
