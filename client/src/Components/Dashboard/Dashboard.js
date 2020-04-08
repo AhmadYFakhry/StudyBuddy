@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './Dashboard.css'
 import Timer from '../Timer/Timer'
 import SessionList from '../List/SessionList';
-import Button from '@material-ui/core/Button';
+import { Button, Grid } from '@material-ui/core';
 import FullScreen from 'react-request-fullscreen'
 import Navbar from '../Navbar/Navbar';
 

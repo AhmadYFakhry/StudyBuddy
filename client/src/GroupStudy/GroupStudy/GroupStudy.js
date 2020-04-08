@@ -36,9 +36,3 @@ class GroupStudy extends React.Component {
             <Navbar />
             <Timer socket={socket} className="timer-backdrop"/>
             <Chat socket={socket}/>
-        </div>
-        )
-    }
-}
-
-export default GroupStudy;
