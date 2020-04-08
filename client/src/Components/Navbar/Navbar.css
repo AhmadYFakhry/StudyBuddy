@@ -50,6 +50,14 @@
     margin-left: 1rem;
   }
   
+  .nav-link i {
+    width: 0.5rem;
+    /* min-width: 2rem; */
+    margin: 0 1.5rem;
+    font-size: 2rem;
+    color: #764ba2;
+  }
+
   .nav-link svg {
     width: 2rem;
     min-width: 2rem;
@@ -91,6 +99,7 @@
     display: inline;
     position: absolute;
     left: -999px;
+    font-size: 1rem;
     transition: var(--transition-speed);
   }
   

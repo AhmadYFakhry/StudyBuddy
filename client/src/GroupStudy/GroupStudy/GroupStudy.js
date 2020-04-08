@@ -30,17 +30,9 @@ class GroupStudy extends React.Component {
           });
     }
 
-    backtoDash() {
-      this.props.history.push('/dashboard')
-    }
-
     render(){
         return(
         <div>
-            <div className="back-controls">
-              <Button variant="contained" onClick={this.backtoDash} >Go back</Button>
-              <LogoutButton></LogoutButton>
-            </div>
             <Timer socket={socket} className="timer-backdrop"/>
             <Chat socket={socket}/>
         </div>
