@@ -56,8 +56,8 @@ class Chat extends React.Component {
       <div>
         <div className="message-box">
           <Form className="mb-3" onSubmit={this.handleMessageSubmit}>
-            <Grid container spacing={1}>
-              <Grid item lg={9} spacing={1}>
+            <Grid container spacing={3} direction="row">
+              <Grid item lg={11} >
                 <FormControl
                   placeholder="Your message"
                   aria-label="Your message"
@@ -66,12 +66,12 @@ class Chat extends React.Component {
                   onChange={this.updateMessage}
                   value={this.state.msg}
                 />
-                <Grid item lg={1} spacing={1}>
+              </Grid>
+                <Grid item lg={1} >
                   <ButtonBase
-                    type="submit" className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeSmall"
+                    type="submit" className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium adjusted"
                     disbaledElevation={true}>Send</ButtonBase>
                 </Grid>
-              </Grid>
             </Grid>
 
           </Form>
