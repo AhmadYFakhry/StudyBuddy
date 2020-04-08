@@ -1,6 +1,8 @@
 .navbar {
     position: fixed;
     background-color: var(--bg-primary);
+    opacity:0.97;
+    -moz-opacity:0.97;
     transition: width 600ms ease;
     overflow: hidden;
     --text-primary: #b6b6b6;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Button, OverlayTrigger, Popover, Alert, Overlay } from "react-bootstrap";
 import axios from 'axios'
-import Cookies from 'universal-cookie';
+import Cookies from 'js-cookie';
 import "./Register.css";
 
 
@@ -69,8 +69,7 @@ class RegistrationForm extends React.Component {
             password: this.state.password
         })
             .then(res => {
-                const cookies = new Cookies();
-                cookies.set('Authorization', 'Bearer ' + res.data.tk);
+                Cookies.set('Authorization', 'Bearer ' + res.data.tk);
                 this.props.history.push('/dashboard');
             })
             .catch(res => {

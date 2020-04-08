@@ -1,5 +1,5 @@
 import React from 'react'
-import Cookies from 'universal-cookie'
+import Cookies from 'js-cookie'
 import decode from 'jwt-decode'
 import "bootstrap/dist/css/bootstrap.min.css";
 import './Dashboard.css'
@@ -7,7 +7,6 @@ import Timer from '../Timer/Timer'
 import SessionList from '../List/SessionList';
 import Button from '@material-ui/core/Button';
 import FullScreen from 'react-request-fullscreen'
-import LogoutButton from '../LogoutButton/LogoutButton'
 import Navbar from '../Navbar/Navbar';
 
 class Dashboard extends React.Component {
