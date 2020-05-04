@@ -257,7 +257,7 @@ deleteList(listId){ //delete the list permanently
               {provided.placeholder}
               {this.state.loading? (
               <Grid container alignItems="center" justify="center" spacing={1}>
-                <Grid item spacing={1}>
+                <Grid item>
                   <CircularProgress color="inherit" />
                 </Grid>
               </Grid>): <div></div>}

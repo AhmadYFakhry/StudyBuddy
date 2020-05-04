@@ -26,7 +26,7 @@ export default class Navbar extends Component {
       <nav className="navbar">
         <ul className="navbar-nav">
           <li className="logo">
-            <a href="#" className="nav-link">
+            <a href="/" className="nav-link">
               <span className="link-text logo-text">STUDYBUDDY</span>
               <svg
                 aria-hidden="true"
