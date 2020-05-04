@@ -25,7 +25,7 @@ class SessionList extends React.Component {
     this.deleteList = this.deleteList.bind(this);
     this.handleListChange = this.handleListChange.bind(this)
     this.toggleLoading = this.toggleLoading.bind(this)
-
+    this.handleTitleChange = this.handleTitleChange.bind(this)
   }
   state = {
     userData: [],
@@ -167,19 +167,17 @@ handleListChange(event) {
 }
 
 createList(e){ //add new list
-  // e.target.reset();
-  // e.preventDefault();
   axios.defaults.headers = {
     Authorization: Auth.getToken()
 }     
   axios.post('http://localhost:8000/list/create', {
-    title: 'Test',
+    title: 'List Title',
   })
   .then(res => {
     console.log(res.data);
     const newList = {
       listId: res.data._id,
-      listTitle: 'Test',
+      listTitle: 'List Title',
       tasks: []
     }
     this.setState({userData: [
@@ -218,25 +216,35 @@ deleteList(listId){ //delete the list permanently
   })
 }
 
-addList() {
-
+handleTitleChange(e, id) {
+  if(e.type === 'blur') {
+    axios.defaults.headers = {
+      Authorization: Auth.getToken()
+    }
+    axios.post('http://localhost:8000/list/update/' + id, {
+      title: e.target.value
+    }).then(
+      (res) => {
+        console.log(res);
+      }
+    ).catch(
+      // Display an error
+    )
+  }
+  const ind = this.state.userData.findIndex((e) => {
+    return e.listId === id;
+  });
+  const newList = [...this.state.userData];
+  console.log(newList[ind].listTitle)
+  console.log(e.target.value)
+  newList[ind].listTitle = e.target.value;
+  console.log(newList);
+  this.setState({userData: newList});
 }
 
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="list-controls">
-        <Form action="submit" onSubmit={e => this.createList(e)}>
-          <Form.Control
-            placeholder="List Name"
-            aria-label="List Name"
-            aria-describedby="basic-addon1"
-            onChange={this.handleListChange}
-          />
-          <br />
-          <Button variant="contained" type="submit">Add List</Button>
-        </Form>
-        </div>
         <Droppable droppableId="all-columns" direction="horizontal" type="column">
           {provided => (
             <Container id="sessionList"
@@ -249,13 +257,15 @@ addList() {
                 const tasks = column.tasks;
                 //maps the created lists 
                 return <Column 
-                  key={column.listId} 
+                  key={column.listId}
+                  id={column.listId} 
                   column={column} 
                   tasks={tasks} 
                   index={index} 
                   createTask={this.createTask} 
                   deleteTask={this.deleteTask}
-                  deleteList={this.deleteList} />;
+                  deleteList={this.deleteList}
+                  updateListName={this.handleTitleChange}/>;
               })}
               {provided.placeholder}
               {this.state.loading? (

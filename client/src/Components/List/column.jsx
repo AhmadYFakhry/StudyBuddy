@@ -2,9 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import Task from './task';
-import {Button, Form} from 'react-bootstrap';
+import {Form} from 'react-bootstrap';
+import {Button} from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import IconButton from '@material-ui/core/IconButton';
+import './column.css'
 
 const Container = styled.div`
   margin: 8px;
@@ -17,7 +19,7 @@ const Container = styled.div`
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 `;
 const Title = styled.h3`
-  padding: 8px;
+  padding-top: 8px;
 `;
 const TaskList = styled.div`
   padding: 8px;
@@ -47,8 +49,9 @@ export default class Column extends React.Component {
         {provided => (
           <Container {...provided.draggableProps} ref={provided.innerRef}>
             <Title 
-            {...provided.dragHandleProps}>{this.props.column.listTitle}
-            <IconButton color="secondary" aria-label="upload picture" component="span" onClick={() => this.props.deleteList(this.props.column.listId)}>
+            {...provided.dragHandleProps}>
+              <input onBlur={e => this.props.updateListName(e, this.props.id)} value={this.props.column.listTitle} className="column-title" onChange={e => this.props.updateListName(e, this.props.id)}></input>
+            <IconButton color="secondary" aria-label="delete list" component="span" onClick={() => this.props.deleteList(this.props.column.listId)}>
               <ClearIcon />
             </IconButton>
             
@@ -71,7 +74,8 @@ export default class Column extends React.Component {
                         onChange={e => this.handleTaskChange(e)}
                       />
                       {/* <input type="text" value={this.state.newTask} id="newtask" onChange={e => this.handleTaskChange(e)} /> */}
-                      <Button variant="outline-primary" type="submit">Add Task</Button>
+                      <br />
+                      <Button variant="contained" color="primary" type="submit">Add Task</Button>
                     </Form>
                   {provided.placeholder}
                 </TaskList>

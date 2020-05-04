@@ -12,7 +12,6 @@ export default class Navbar extends Component {
       axios.defaults.headers = {
         Authorization: tk
       }
-      console.log(tk);
       await axios.post('http://localhost:8000/user/logout');
       Cookies.remove('Authorization', { path: '/' });
       window.location.href = "/";
