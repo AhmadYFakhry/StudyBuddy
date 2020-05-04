@@ -65,6 +65,17 @@ router.delete('/list/delete/:id', auth, async (req, res) => {
     }
 })
 
+router.post('/list/update/:id', auth, async (req, res) => {
+    try {
+        await List.findByIdAndUpdate(req.params.id, {
+            title: req.body.title
+        })
+        res.status(200).send();
+    } catch (error) {
+        res.status(404).send();
+    }
+})
+
 
 // Adds a task to the list
 // Adds a list to the user's current lists (DO LATER)
