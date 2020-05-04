@@ -47,7 +47,8 @@ export default class Column extends React.Component {
         {provided => (
           <Container {...provided.draggableProps} ref={provided.innerRef}>
             <Title 
-            {...provided.dragHandleProps}>{this.props.column.listTitle}
+            {...provided.dragHandleProps}>
+            <input value="Test"/>
             <IconButton color="secondary" aria-label="upload picture" component="span" onClick={() => this.props.deleteList(this.props.column.listId)}>
               <ClearIcon />
             </IconButton>
