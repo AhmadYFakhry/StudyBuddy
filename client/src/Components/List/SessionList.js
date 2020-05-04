@@ -46,8 +46,8 @@ class SessionList extends React.Component {
         return e.listId;
       });
       this.setState({columnOrder: test})
-      this.toggleLoading();
       });
+      this.toggleLoading();
     }
 
   componentWillUnmount() {
