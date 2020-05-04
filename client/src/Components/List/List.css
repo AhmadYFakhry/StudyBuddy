@@ -16,4 +16,20 @@
 
 .MuiCircularProgress-root {
     color: white;
+    height: 4rem !important;
+    width: 4rem !important;
+}
+
+.MuiSvgIcon-fontSizeLarge {
+    height: 4rem !important;
+    width: 4rem !important;
+}
+
+.test {
+    color: #d5dcf8 !important;
+    margin: auto !important;
+}
+
+.test:disabled {
+    display: none;
 }

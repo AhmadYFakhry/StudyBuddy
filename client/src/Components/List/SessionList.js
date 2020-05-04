@@ -5,10 +5,12 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Auth from '../../HOC/Auth'
 import {Form, Col} from 'react-bootstrap';
+import { Grid, Icon } from '@material-ui/core';
 import './List.css'
 import CircularProgress from '@material-ui/core/CircularProgress';
-
+import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
 const Container = styled.div`
   display: flex;
@@ -46,8 +48,8 @@ class SessionList extends React.Component {
         return e.listId;
       });
       this.setState({columnOrder: test})
-      });
       this.toggleLoading();
+    });
     }
 
   componentWillUnmount() {
@@ -165,26 +167,25 @@ handleListChange(event) {
 }
 
 createList(e){ //add new list
-  e.target.reset();
-  e.preventDefault();
+  // e.target.reset();
+  // e.preventDefault();
   axios.defaults.headers = {
     Authorization: Auth.getToken()
 }     
   axios.post('http://localhost:8000/list/create', {
-    title: this.state.newList,
+    title: 'Test',
   })
   .then(res => {
     console.log(res.data);
     const newList = {
       listId: res.data._id,
-      listTitle: res.data.title,
+      listTitle: 'Test',
       tasks: []
     }
     this.setState({userData: [
       ...this.state.userData,
       newList
     ]});
-    console.log(this.state.userData);
     const test = this.state.userData.map(e => {
       return e.listId;
     });
@@ -217,6 +218,10 @@ deleteList(listId){ //delete the list permanently
   })
 }
 
+addList() {
+
+}
+
   render() {
     return (
       <DragDropContext onDragEnd={this.onDragEnd}>
@@ -239,8 +244,8 @@ deleteList(listId){ //delete the list permanently
               ref={provided.innerRef}
             >
               {this.state.columnOrder.map((e, index) => {
+                if(!this.state.userData[index]) return;
                 const column = this.state.userData[index];
-                console.log(index, column)
                 const tasks = column.tasks;
                 //maps the created lists 
                 return <Column 
@@ -253,7 +258,17 @@ deleteList(listId){ //delete the list permanently
                   deleteList={this.deleteList} />;
               })}
               {provided.placeholder}
-              {this.state.loading? <CircularProgress color="inherit" />: <div></div>}
+              {this.state.loading? (
+              <Grid container alignItems="center" justify="center" spacing={1}>
+                <Grid item>
+                  <CircularProgress color="inherit" />
+                </Grid>
+              </Grid>): (
+                <IconButton className="test" onClick={ e => this.createList(e)} disabled={this.state.userData.length >= 5}>
+                  <AddBoxIcon fontSize="large"></AddBoxIcon>
+                </IconButton>
+              )}
+    
             </Container>
           )}
         </Droppable>

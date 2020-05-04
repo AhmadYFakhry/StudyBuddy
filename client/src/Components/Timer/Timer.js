@@ -173,17 +173,17 @@ class Timer extends React.Component {
         <input onBlur={this.formatSeconds} disabled={this.state.disabled} maxLength="2" max="59" className="timer" type="number" value={this.state.seconds} onChange={this.updateSeconds} />
         <br />
         <Grid container alignItems="center" justify="center" spacing={1}>
-          <Grid item spacing={1}>
+          <Grid itemScope>
             <Button variant="contained" ref="btn" onClick={this.start} disabled={this.state.disabled}>
               <MdPlayArrow />
             </Button>
           </Grid>
-          <Grid item spacing={1}>
+          <Grid item>
             <Button variant="contained" onClick={this.stop} disabled={!this.state.disabled}>
               <MdPause />
             </Button>
           </Grid>
-          <Grid item spacing={1}>
+          <Grid item>
             <Button variant="contained" onClick={this.reset}>
               <MdRefresh />
             </Button>
