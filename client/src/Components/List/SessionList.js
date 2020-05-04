@@ -6,6 +6,8 @@ import axios from 'axios';
 import Auth from '../../HOC/Auth'
 import {Form, Col} from 'react-bootstrap';
 import './List.css'
+import CircularProgress from '@material-ui/core/CircularProgress';
+
 import Button from '@material-ui/core/Button';
 
 const Container = styled.div`
@@ -20,15 +22,19 @@ class SessionList extends React.Component {
     this.createList = this.createList.bind(this);
     this.deleteList = this.deleteList.bind(this);
     this.handleListChange = this.handleListChange.bind(this)
+    this.toggleLoading = this.toggleLoading.bind(this)
+
   }
   state = {
     userData: [],
     newList: '',
     user: '',
-    columnOrder: []
+    columnOrder: [],
+    loading: false
     }
 
   componentDidMount() {
+    this.toggleLoading();
     axios.defaults.headers = {
       Authorization: Auth.getToken()
     }  
@@ -40,9 +46,9 @@ class SessionList extends React.Component {
         return e.listId;
       });
       this.setState({columnOrder: test})
-      console.log('BEFORE', this.state.columnOrder);
       });
-  }
+      this.toggleLoading();
+    }
 
   componentWillUnmount() {
 
@@ -150,6 +156,10 @@ deleteTask(taskId, listId){
   })
 }
 
+toggleLoading() {
+  this.setState({loading: !this.state.loading})
+}
+
 handleListChange(event) {
   this.setState({newList: event.target.value});
 }
@@ -184,6 +194,15 @@ createList(e){ //add new list
 
 
 deleteList(listId){ //delete the list permanently
+  this.setState({})
+  axios.defaults.headers = {
+    Authorization: Auth.getToken()
+  }     
+  axios.delete('http://localhost:8000/list/delete/' + listId).then(
+    (res) => {
+      console.log(res);
+    }
+  )
   const list = this.state.userData;
   const ind = list.findIndex(e => {
     return e.listId === listId;
@@ -196,11 +215,6 @@ deleteList(listId){ //delete the list permanently
   this.setState({
     columnOrder: [...first, ...last]
   })
-  // this.setState({})
-  // axios.defaults.headers = {
-  //   Authorization: Auth.getToken()
-  // }     
-  // axios.post('http://localhost:8000/list/delete' + listId)
 }
 
   render() {
@@ -239,6 +253,7 @@ deleteList(listId){ //delete the list permanently
                   deleteList={this.deleteList} />;
               })}
               {provided.placeholder}
+              {this.state.loading? <CircularProgress color="inherit" />: <div></div>}
             </Container>
           )}
         </Droppable>

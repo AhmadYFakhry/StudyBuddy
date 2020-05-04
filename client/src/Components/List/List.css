@@ -13,3 +13,7 @@
     display: inline;
     justify-content: space-evenly;
 }
+
+.MuiCircularProgress-root {
+    color: white;
+}

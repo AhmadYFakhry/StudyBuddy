@@ -8,6 +8,7 @@ import SessionList from '../List/SessionList';
 import { Button, Grid } from '@material-ui/core';
 import FullScreen from 'react-request-fullscreen'
 import Navbar from '../Navbar/Navbar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -77,7 +78,8 @@ class Dashboard extends React.Component {
             </div>
           </FullScreen>
         </div>
-        <SessionList id="sessionList" ></SessionList>
+        <SessionList id="sessionList" >
+        </SessionList>
       </div>
     )
   }
