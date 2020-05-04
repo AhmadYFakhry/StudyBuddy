@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 import Auth from '../../HOC/Auth'
 import {Form, Col} from 'react-bootstrap';
+import { Grid } from '@material-ui/core';
+
 import './List.css'
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -46,8 +48,8 @@ class SessionList extends React.Component {
         return e.listId;
       });
       this.setState({columnOrder: test})
-      });
       this.toggleLoading();
+    });
     }
 
   componentWillUnmount() {
@@ -239,8 +241,8 @@ deleteList(listId){ //delete the list permanently
               ref={provided.innerRef}
             >
               {this.state.columnOrder.map((e, index) => {
+                if(!this.state.userData[index]) return;
                 const column = this.state.userData[index];
-                console.log(index, column)
                 const tasks = column.tasks;
                 //maps the created lists 
                 return <Column 
@@ -253,7 +255,12 @@ deleteList(listId){ //delete the list permanently
                   deleteList={this.deleteList} />;
               })}
               {provided.placeholder}
-              {this.state.loading? <CircularProgress color="inherit" />: <div></div>}
+              {this.state.loading? (
+              <Grid container alignItems="center" justify="center" spacing={1}>
+                <Grid item spacing={1}>
+                  <CircularProgress color="inherit" />
+                </Grid>
+              </Grid>): <div></div>}
             </Container>
           )}
         </Droppable>

@@ -8,7 +8,6 @@ require("./utils/DbSetup");
 const app = express();
 
 app.use(function (req, res, next) {
-    console.log(req.headers);
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Authorization, DELETE, POST');
     res.header('Access-Control-Allow-Methods', 'DELETE, POST');
