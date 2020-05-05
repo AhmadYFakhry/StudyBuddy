@@ -56,7 +56,6 @@ router.post('/task/create', auth, async (req, res) => {
 //An entry for a post request to delete a task
 router.delete('/task/delete/:id', auth, async (req, res) => {
     // console.log(req.body);
-    console.log("HERE")
     const id = req.params.id;
     try {
         // const task = await Task.findById(id);
@@ -68,7 +67,6 @@ router.delete('/task/delete/:id', auth, async (req, res) => {
         // await list.update({name: task.listid}, {$push: {tasks: task._id }})
         res.send();
     } catch (e) {
-        console.log(e);
         res.status(400).send(e);
     }
 });
