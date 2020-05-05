@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Button from '@material-ui/core/Button';
 import './Gateway.css'
-import GroupIcon from '@material-ui/icons/Group';
 import { Grid, Container } from '@material-ui/core';
 
 export default class Gateway extends Component {

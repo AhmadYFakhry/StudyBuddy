@@ -4,12 +4,10 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import axios from 'axios';
 import Auth from '../../HOC/Auth'
-import {Form, Col} from 'react-bootstrap';
-import { Grid, Icon } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import './List.css'
 import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 
 const Container = styled.div`
@@ -52,8 +50,8 @@ class SessionList extends React.Component {
     });
     }
 
-  componentWillUnmount() {
-
+  componentDidUpdate() {
+    console.log("Test");
   }
 
   onDragEnd = result => {
@@ -68,8 +66,6 @@ class SessionList extends React.Component {
       return;
     }
     if (type === 'column') {
-      console.log(source.index);
-      console.log(destination.index);
       const newColumnOrder = [...this.state.columnOrder];
       [newColumnOrder[source.index], newColumnOrder[destination.index]] = [newColumnOrder[destination.index], newColumnOrder[source.index]];
 
@@ -80,7 +76,6 @@ class SessionList extends React.Component {
         columnOrder: newColumnOrder,
         userData: data
       });
-      console.log('AFTER', this.state.columnOrder);
       return;
     }
     const start = source.droppableId;
@@ -138,7 +133,6 @@ createTask(e, content, listid){
 }  
 
 deleteTask(taskId, listId){
-
   let startList = this.state.userData.filter((e) => {
     return e.listId === listId;
   })[0];
@@ -152,9 +146,9 @@ deleteTask(taskId, listId){
     Authorization: Auth.getToken()
 }     
   axios.delete('http://localhost:8000/task/delete/' + taskId).then(res => {
-    console.log(res.body)
+    //TODO: Log a notifaction that the task was successfully deleted
   }).catch(e => {
-    console.log(e);
+     //TODO: Log a notifaction that the task was not successfully deleted
   })
 }
 
@@ -174,7 +168,7 @@ createList(e){ //add new list
     title: 'List Title',
   })
   .then(res => {
-    console.log(res.data);
+    //TODO: Log a notifaction that the list was successfully added
     const newList = {
       listId: res.data._id,
       listTitle: 'List Title',
@@ -189,6 +183,7 @@ createList(e){ //add new list
     });
     this.setState({columnOrder: test})
   })
+  //TODO: Log a notifaction that the list was not succesfully deleted
 }
 
 
@@ -197,20 +192,21 @@ deleteList(listId){ //delete the list permanently
   axios.defaults.headers = {
     Authorization: Auth.getToken()
   }     
-  axios.delete('http://localhost:8000/list/delete/' + listId).then(
-    (res) => {
+  axios.delete('http://localhost:8000/list/delete/' + listId)
+  .then((res) => {
       console.log(res);
-    }
-  )
+      //TODO: Log a notifaction that the list was successfully deleted
+    })
+  .catch(res => {
+      //TODO: Log a notifaction that the list was not successfully deleted
+  })
   const list = this.state.userData;
   const ind = list.findIndex(e => {
     return e.listId === listId;
   })
-  console.log(ind);
   this.state.userData.splice(ind, 1);
   const first = this.state.columnOrder.slice(0, ind);
   const last = this.state.columnOrder.slice(ind);
-  console.log(first, last)
   this.setState({
     columnOrder: [...first, ...last]
   })
@@ -235,10 +231,7 @@ handleTitleChange(e, id) {
     return e.listId === id;
   });
   const newList = [...this.state.userData];
-  console.log(newList[ind].listTitle)
-  console.log(e.target.value)
   newList[ind].listTitle = e.target.value;
-  console.log(newList);
   this.setState({userData: newList});
 }
 
@@ -252,7 +245,7 @@ handleTitleChange(e, id) {
               ref={provided.innerRef}
             >
               {this.state.columnOrder.map((e, index) => {
-                if(!this.state.userData[index]) return;
+                if(!this.state.userData[index]) return null;
                 const column = this.state.userData[index];
                 const tasks = column.tasks;
                 //maps the created lists 

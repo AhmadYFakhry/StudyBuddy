@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Container, Button, OverlayTrigger, Popover, Alert, Overlay } from "react-bootstrap";
+import { Form, Container, Button, OverlayTrigger, Popover, Alert } from "react-bootstrap";
 import axios from 'axios'
 import Cookies from 'js-cookie';
 import "./Register.css";

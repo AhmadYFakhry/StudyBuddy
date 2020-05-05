@@ -59,7 +59,7 @@ class SocketAuth extends React.Component {
                   required
                 />
                 <br />
-                <Button className="loginButton" variant="success" type="submit" className="login-button">
+                <Button variant="success" type="submit">
                   Join
                 </Button>
                 <br />

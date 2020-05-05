@@ -2,7 +2,7 @@ import React from 'react'
 import './AuthPage.css'
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { Container, Alert, Modal, Button, Spinner } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import LoginForm from '../../Components/Login/Login.js'
 
 
@@ -36,6 +36,7 @@ class AuthPage extends React.Component {
         email: this.state.email,
         password: this.state.password
       })
+      Cookies.set('uid', res.data.user._id);
       Cookies.set('Authorization', 'Bearer ' + res.data.tk, { path: '' });
       window.location.href = "/dashboard"
     } catch (error) {
@@ -46,14 +47,6 @@ class AuthPage extends React.Component {
   render() {
     return (
       < Container className="container" >
-        <Modal
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered>
-          <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
-          </Spinner>
-        </Modal>
         <LoginForm
           loginHandler={this.handleLogin}
           updateEmail={this.updateEmail}
