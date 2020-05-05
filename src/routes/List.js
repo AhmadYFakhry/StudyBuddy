@@ -22,7 +22,6 @@ router.post('/list/create', auth, async (req, res) => {
     }
     )
     .catch(err => {
-        console.log(err)
         res.status(400).json('Error: ' + err);
     })
 });
@@ -47,7 +46,6 @@ router.get('/list/getAll/', auth, async (req, res) => {
         // console.log(lists);
         res.status(200).send({lists});
     } catch (error) {
-        console.log(error);
         res.status(404).send("Error: list not found")
     }
 });

@@ -1,30 +1,20 @@
 import React from 'react'
-import Cookies from 'js-cookie'
-import decode from 'jwt-decode'
 import "bootstrap/dist/css/bootstrap.min.css";
 import './Dashboard.css'
 import Timer from '../Timer/Timer'
 import SessionList from '../List/SessionList';
-import { Button, Grid } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import FullScreen from 'react-request-fullscreen'
 import Navbar from '../Navbar/Navbar';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Cookies from 'js-cookie';
 
 class Dashboard extends React.Component {
   constructor(props) {
     super()
     this.props = props
     this.state = {
-      loggedIn: false,
-      timerRunning: false,
-      timerMinute: 25,
-      break: 5,
-      session: 25,
-      counter: false,
-      flipper: true,
       FullScreen: false,
     }
-    this.backtoDash = this.backtoDash.bind(this);
   }
 
   onFullScreenChange(isFullScreen) {
@@ -40,33 +30,11 @@ class Dashboard extends React.Component {
     this.elFullScreenRef.fullScreen(this.elRef)
   }
 
-  getToken() {
-    const cookies = new Cookies();
-    const cookie = cookies.get('Authorization');
-    return cookie;
-  }
-
-  isLoggedIn() {
-    try {
-      const tk = this.getToken();
-      const decoded = decode(tk);
-      if (decoded.exp < Date.now() / 1000) {
-        this.setState({ loggedIn: false })
-      }
-      this.setState({ loggedIn: true })
-    } catch (error) {
-      this.setState({ loggedIn: false })
-    }
-  }
-
-  backtoDash() {
-    this.props.history.push('/dashboard')
-  }
   render() {
     const { isFullScreen } = this.state
     return (
       <div className="App">
-        <Navbar />
+        <Navbar userId={Cookies.get('uid')} />
         <div className="timer-backdrop">
           <Timer />
           <br></br>

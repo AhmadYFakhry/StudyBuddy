@@ -6,6 +6,13 @@ import Cookies from 'js-cookie';
 
 export default class Navbar extends Component {
 
+  constructor(props) {
+    super();
+
+    this.props = props;
+    console.log(this.props)
+  }
+
   async handleLogout() {
     const tk = Auth.getToken();
     try {
@@ -54,7 +61,7 @@ export default class Navbar extends Component {
           </li>
 
           <li className="nav-item">
-            <a href="#" className="nav-link">
+            <a href={`/profile/${this.props.userId}`} className="nav-link">
               <i class="fas fa-user-circle"></i>
               <span className="link-text">Profile</span>
             </a>
@@ -66,13 +73,13 @@ export default class Navbar extends Component {
             </a>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link" onClick={this.handleLogout}>
+            <div className="nav-link" onClick={this.handleLogout}>
               <i class="fas fa-sign-out-alt"></i>
               <span className="link-text">Sign out</span>
-            </a>
+            </div>
 
 
-            <a href="#" className="nav-link">
+            <a href="/" className="nav-link">
               <i class="fas fa-cog"></i>
               <span className="link-text">Settings</span>
             </a>

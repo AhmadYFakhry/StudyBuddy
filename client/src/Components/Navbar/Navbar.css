@@ -26,6 +26,10 @@
     width: 100%;
     margin-right: 2rem;
   }
+
+  .nav-item:hover {
+    cursor: pointer;
+  }
   
   .nav-item:last-child {
     margin-top: auto;
