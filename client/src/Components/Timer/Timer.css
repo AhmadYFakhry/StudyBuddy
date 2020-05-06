@@ -21,6 +21,11 @@
     width: 5%;
 }
 
+.icons {
+    font-size: 3rem !important;
+    margin: 0px 30px;
+}
+
 .timer:disabled {
     font-size: 118px;
     border: none;

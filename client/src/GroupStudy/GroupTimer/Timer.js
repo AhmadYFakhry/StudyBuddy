@@ -17,6 +17,8 @@ class Timer extends React.Component {
       seconds: "00",
       disabled: false,
       sound: true,  //play the sound whenever reset
+
+      
       break: false,
       continious: false
     }
