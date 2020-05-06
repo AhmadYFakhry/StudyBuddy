@@ -11,14 +11,13 @@
     font-weight: 600;
 }
 
-.timer-backdrop {
-    margin-top: 100px;
-    padding: 50px
-    background-color;
-}
-
 .controls {
     width: 5%;
+}
+
+.icons {
+    font-size: 3rem !important;
+    margin: 0px 30px;
 }
 
 .timer:disabled {
