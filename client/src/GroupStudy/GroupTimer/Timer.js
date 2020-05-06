@@ -1,298 +1,186 @@
-import React from 'react'
-import UIfx from 'uifx'
-import mp3File from './beep.mp3'
+import React, {useState, useEffect} from 'react'
 import { Button, Grid } from '@material-ui/core';
 import { MdPlayArrow, MdPause, MdRefresh } from 'react-icons/md';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import FreeBreakfastIcon from '@material-ui/icons/FreeBreakfast';
+import WorkIcon from '@material-ui/icons/Work';
 import './Timer.css'
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import Notification from '../../Components/Notification/index'
 
-class Timer extends React.Component {
-  constructor(props) {
-    super()
-    this.props = props;
-    this.state = {
-      minutes: "25",
-      seconds: "00",
-      disabled: false,
-      sound: true,  //play the sound whenever reset
+  let intervalHandle;
+  let secondsRemaining;
 
-      
-      break: false,
-      continious: false
-    }
+export default function Timer(props) {
+  const [minutes, setMinutes] = useState('25');
+  const [seconds, setSeconds] = useState('00');
+  const [disabled, setDisabled] = useState(false);
+  const [modeBreak, setModeBreak] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    this.socket = this.props.socket
+  let socket = props.socket;
 
-    this.beep = new UIfx(mp3File);
-    this.start = this.start.bind(this);
-    this.stop = this.stop.bind(this);
-    this.reset = this.reset.bind(this);
-    this.updateMinutes = this.updateMinutes.bind(this);
-    this.formatMinutes = this.formatMinutes.bind(this);
-    this.updateSeconds = this.updateSeconds.bind(this);
-    this.formatSeconds = this.formatSeconds.bind(this);
-    this.switchMode = this.switchMode.bind(this);
-    this.switchContinue = this.switchContinue.bind(this);
-    this.handleClickPlay = this.handleClickPlay.bind(this);
-    this.handleClickPause = this.handleClickPause.bind(this);
-    this.handleClickReset = this.handleClickReset.bind(this);
-    this.handleSwitchModes = this.handleSwitchModes.bind(this);
-    this.handleSwitchContinue = this.handleSwitchContinue.bind(this);
-    this.tick = this.tick.bind(this);
+  useEffect(() => {
+    socket.on('play', (id) => {
+      if (id !== socket.id) start();
+    });
+    socket.on('pause', (id) => {
+      if (id !== socket.id) stop();
+    });
+    socket.on('reset', (id) => {
+      if (id !== socket.id) reset();
+    });
+    socket.on('switchModes', (id) => {
+      if (id !== socket.id) switchMode();
+    });
+  }, []);
+
+  const handleClickPlay = () => {
+    socket.emit('sendPlay');
+    start();
   }
 
-  componentDidMount() {
-    this.socket.on('play', (id) => {
-      if (id === this.socket.id) {
-      } else {
-        this.start();
-      }
-    });
-    this.socket.on('pause', (id) => {
-      if (id === this.socket.id) {
-      } else {
-        this.stop();
-      }
-    });
-    this.socket.on('reset', (id) => {
-      if (id === this.socket.id) {
-      } else {
-        this.reset();
-      }
-    });
-    this.socket.on('switchModes', (id) => {
-      if (id === this.socket.id) {
-      } else {
-        console.log("Test")
-        this.switchMode();
-      }
-    });
-    this.socket.on('switchContinue', (id) => {
-      if (id === this.socket.id) {
-      } else {
-        console.log("Test")
-        this.switchContinue();
-      }
-    });
+  const handleClickPause = () => {
+    socket.emit('sendPause');
+    stop();
   }
 
-  switchMode() {
-    // this.setState({
-    //   break: !this.state.break,
-    // });
-    // if(!this.state.break) {
-    //   this.setState({
-    //     minutes: "05"
-    //   });
-    //   return;
-    // }
-    // else this.setState({
-    //   minutes: "25"
-    // });
-    if (this.state.break === true) {
-      this.setState({
-        break: !this.state.break,
-      });
-      this.setState({
-        minutes: "25"
-      });
-      return;
-    }
-    else {
-      this.setState({
-        break: !this.state.break,
-      });
-      this.setState({
-        minutes: "05"
-      });
-      return;
-    }
+  const handleClickReset = () => {
+    socket.emit('sendReset');
+    reset();
   }
 
-  updateMinutes(e) {
+  const handleSwitchModes = () => {
+    socket.emit('sendSwitchModes');
+    switchMode();
+  }
+
+  const tick = () => {
+    const min = Math.floor(secondsRemaining / 60);
+    const sec = (secondsRemaining - (min * 60));
+    setMinutes(String(min));
+    setSeconds(String(sec))
+    if (sec < 10) setSeconds("0" + sec);
+    if (min < 10) setMinutes("0" + min);
+    if (min === 0 && sec === 0) {
+      setOpen(true)
+      stop();
+      switchMode();
+    }
+    secondsRemaining--;
+  }
+
+  const updateMinutes = (e) => {
     let value = e.target.value;
-    if (value < 0) {
-      return;
-    }
-    if (value.length > 2) {
-      return;
-    }
-    this.setState({ minutes: value });
+    if (value < 0) return;
+    if (value.length > 2) return;
+    setMinutes(value);
 
   }
-  updateSeconds(e) {
-    let value = e.target.value;
-    console.log(value);
-    if (value < 0) {
-      return;
-    }
-    if (value.length > 2) {
-      return;
-    }
-    this.setState({ seconds: value });
+  const updateSeconds = (e) => {
+    let value = String(e.target.value);
+    if (value < 0) return;
+    if (value.length > 2) return;
+    setSeconds(value);
   }
 
-  tick() {
-    const min = Math.floor(this.secondsRemaining / 60);
-    const sec = (this.secondsRemaining - (min * 60));
-    this.setState({
-      minutes: min,
-      seconds: sec
-    })
-    if (sec < 10) {
-      this.setState({
-        seconds: "0" + this.state.seconds,
-      })
-    }
-    if (min < 10) {
-      this.setState({
-        minutes: "0" + min,
-      })
-    }
-    if (min === 0 & sec === 0) {
-      if (this.state.continious) { this.notification.showNotification('Timer Complete. New timer starting!'); }
-      else { this.notification.showNotification('Timer Complete. Start your new timer!'); }
-
-      this.stop();
-      this.switchMode();
-      if (this.state.continious) {
-        this.start()
-      }
-    }
-    this.secondsRemaining--
-  }
-
-  stop() {
-    clearInterval(this.intervalHandle);
-    this.setState({
-      disabled: false,
-    })
-  }
-
-  handleClickPlay() {
-    this.socket.emit('sendPlay');
-    this.start();
-  }
-
-  handleClickPause() {
-    this.socket.emit('sendPause');
-    this.stop();
-  }
-
-  handleClickReset() {
-    this.socket.emit('sendReset');
-    this.reset();
-  }
-
-  handleSwitchModes() {
-    this.socket.emit('sendSwitchModes');
-    this.switchMode();
-  }
-
-  handleSwitchContinue() {
-    this.socket.emit('sendSwitchContinue');
-    this.switchContinue();
-  }
-
-  start() {
-    this.setState({
-      disabled: true,
-      sound: true
-    })
-    this.intervalHandle = setInterval(this.tick, 1000);
-    let time = this.state.minutes;
-    this.secondsRemaining = time * 60 + Number(this.state.seconds);
-    // this.socket.emit('sendPlay');
-  }
-
-  reset() {
-    this.stop();
-    this.setState({
-      seconds: '00',
-      minutes: '25',
-      sound: true,
-      break: false
-    });
-    this.setState({ disabled: false })
-  }
-
-  formatMinutes(e) {
-    const value = e.target.value;
-    if (value.length >= 2) {
-      return;
-    }
-    if (value < 10) {
-      this.setState({
-        minutes: "0" + value
-      })
-    }
+  const formatMinutes = (e) => {
+    let value = String(e.target.value);
+    if (value.length >= 2) return;
+    if (value < 10) setMinutes("0" + value);
     return;
   }
 
-  formatSeconds(e) {
+  const formatSeconds = (e) => {
     const value = e.target.value;
-    if (value.length >= 2) {
-      return;
-    }
+    if (value.length >= 2) return;
     else if (value < 10) {
-      this.setState({
-        seconds: "0" + value
-      })
+      setSeconds("0" + value);
       return;
     }
   }
 
-  switchContinue() {
-    this.setState({
-      continious: !this.state.continious
-    })
+  const stop = async () => {
+    await clearInterval(intervalHandle);
+    setDisabled(false);
   }
 
-  render() {
-    return (
+  const switchMode = () => {
+    if (modeBreak) {
+      setModeBreak(!modeBreak)
+      setMinutes("25")
+      setSeconds("00")
+      return;
+    }
+    else {
+      setModeBreak(!modeBreak)
+      setMinutes("05");
+      setSeconds("00")
+      return;
+    }
+  }
 
-      <section className="timer-backdrop">
-        <input onBlur={this.formatMinutes} disabled maxLength="2" max="99" className="timer" type="number" value={this.state.minutes} onChange={this.updateMinutes} />
-        <p className="colon">:</p>
-        <input onBlur={this.formatSeconds} disabled maxLength="2" max="59" className="timer" type="number" value={this.state.seconds} onChange={this.updateSeconds} />
-        <br />
-        <Grid container alignItems="center" justify="center" spacing={1}>
-          <Grid item>
-            <Button variant="contained" ref="btn" onClick={this.handleClickPlay} disabled={this.state.disabled}>
-              <MdPlayArrow />
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={this.handleClickPause} disabled={!this.state.disabled}>
-              <MdPause />
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={this.handleClickReset}>
-              <MdRefresh />
-            </Button>
-          </Grid>
+  const start = () => {
+    setDisabled(true)
+    intervalHandle = setInterval(tick, 1000);
+    let time = Number(minutes);
+    secondsRemaining = time * 60 + Number(seconds);
+  }
+
+  const reset = () => {
+    stop();
+    secondsRemaining = 0;
+    setSeconds("00");
+    setMinutes("25");
+    setModeBreak(false)
+    setDisabled(false);
+  }
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  }
+
+  return (
+    <section className="timer-backdrop">
+      <Snackbar  
+          open={open} 
+          autoHideDuration={2500} 
+          onClose={handleClose}
+          anchorOrigin={{vertical: 'top', horizontal: 'right'}}>
+          <MuiAlert variant="filled" onClose={handleClose} severity="success">
+              {!modeBreak? `Time's up! Congrats, its time for your break!`: `Time's up! Get back to studying!`}
+          </MuiAlert>
+      </Snackbar>
+      {modeBreak? <FreeBreakfastIcon fontSize="large" />: <WorkIcon fontSize="large" />}
+
+      <input onBlur={e => formatMinutes(e)} disabled={disabled} maxLength="2" max="99" className="timer" type="number" value={minutes} onChange={updateMinutes} />
+      <p className="colon">:</p>
+      <input onBlur={e => formatSeconds(e)} disabled={disabled} maxLength="2" max="59" className="timer" type="number" value={seconds} onChange={updateSeconds} />
+      <br />
+      <Grid container alignItems="center" justify="center" spacing={1}>
+        <Grid itemScope>
+          <Button variant="contained" onClick={handleClickPlay} disabled={disabled}>
+            <MdPlayArrow />
+          </Button>
         </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={handleClickPause} disabled={!disabled}>
+            <MdPause />
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={handleClickReset}>
+            <MdRefresh />
+          </Button>
+        </Grid>
+      </Grid>
+      <br />
+      <div >
         <br />
-
-        <Button variant="contained" ref="btn" onClick={this.handleSwitchModes} disabled={this.state.disabled}>Switch Modes {this.state.br}</Button>
-        <Notification ref={ref => (this.notification = ref)} />
-        <br />
-        <FormControlLabel
-          control={
-            <Switch
-              checked={this.state.continious}
-              onChange={this.handleSwitchContinue}
-              name="checkedB"
-              color="default"
-            />
-          }
-          label={<p className="switch-label">Continuous Mode {this.state.continious === true ? "Enabled" : "Disabled"}</p>}
-        />
-      </section>
-    )
-  }
+        <Button variant="contained" onClick={handleSwitchModes} disabled={disabled}>Switch Modes</Button>
+      </div>
+    </section>
+  )
 }
-export default Timer

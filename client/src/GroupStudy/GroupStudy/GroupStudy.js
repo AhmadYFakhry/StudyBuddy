@@ -32,7 +32,7 @@ class GroupStudy extends React.Component {
         return(
         <div>
             <Navbar />
-            <Timer socket={socket} className="timer-backdrop"/>
+            <Timer socket={socket}/>
             <Chat socket={socket}/>
         </div>
         )
