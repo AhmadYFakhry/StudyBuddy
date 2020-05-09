@@ -33,10 +33,8 @@ export default function SessionList() {
   }, []);
 
   useEffect(() => {
-    console.log("Testing")
-    console.log(userData);
-    const test = userData.map(e => e.listId);
-    setColumnOrder(test);
+    const updatedOrder = userData.map(e => e.listId);
+    setColumnOrder(updatedOrder);
   }, [userData])
 
   const onDragEnd = result => {
@@ -88,43 +86,29 @@ export default function SessionList() {
     finishList.tasks.push(task);
   };
 
-  const createTask = (e, content, listid) => {
+  const createTask = async (e, content, listid) => {
     e.preventDefault();
     e.target.reset();
     axios.defaults.headers = {
       Authorization: Auth.getToken()
     };
-    axios.post(`http://localhost:8000/task/create`, {
-      content,
-      listid
-    })
-      .then(res => {
-        const newUserData = [...userData];
-        const ind = userData.findIndex((e) => {
-           return e.listId === listid;
-        });
-        newUserData[ind].tasks.push(res.data);
-        // console.log(newUserData);
-        setUserData(newUserData);
+    try {
+      const res = await axios.post(`http://localhost:8000/task/create`, {
+        content,
+        listid
       })
+      const newUserData = [...userData];
+      const ind = userData.findIndex((e) => {
+          return e.listId === listid;
+      });
+      newUserData[ind].tasks.push(res.data);
+      setUserData(newUserData);
+    } catch (error) {
+      console.log(error)
+    }
   }  
   
   const deleteTask = async (taskId, listId) => {
-    const currentData = [...userData];
-    let startList = currentData.filter((e) => {
-      return e.listId === listId;
-    })[0];
-  
-    const ind = startList.tasks.findIndex(e => {
-      return e._id === taskId;
-    })
-    startList.tasks.splice(ind, 1)
-    const listIndex = currentData.findIndex(e => {
-      return e.listId === listId;
-    });
-
-    currentData[listIndex] = startList;
-    setUserData(currentData);
     try {
       axios.defaults.headers = {
         Authorization: Auth.getToken()
@@ -133,66 +117,76 @@ export default function SessionList() {
     } catch (error) {
         console.log(error) 
     }
+    let startList = [...userData].filter((e) => {
+      return e.listId === listId;
+    })[0];
+  
+    const ind = startList.tasks.findIndex(e => {
+      return e._id === taskId;
+    })
+    startList.tasks.splice(ind, 1)
+    const listIndex = [...userData].findIndex(e => {
+      return e.listId === listId;
+    });
+    [...userData][listIndex] = startList;
+    setUserData([...userData]);
   }
   
   const createList = async () => { //add new list
     axios.defaults.headers = {
       Authorization: Auth.getToken()
-  }     
-    const res = await axios.post('http://localhost:8000/list/create', {
-      title: 'List Title',
-    })
-    const newList = {
-      listId: res.data._id,
-      listTitle: 'List Title',
-      tasks: []
     }
-    setUserData([...userData, newList]);
+    try {
+      const res = await axios.post('http://localhost:8000/list/create', {
+        title: 'List Title',
+      })
+      const newList = {
+        listId: res.data._id,
+        listTitle: 'List Title',
+        tasks: []
+      }
+      setUserData([...userData, newList]);
+    } catch (error) {
+      console.log(error);
+    }     
   }
   
-  const deleteList = (listId) => { //delete the list permanently
+  const deleteList = async (listId) => { //delete the list permanently
     axios.defaults.headers = {
       Authorization: Auth.getToken()
-    }     
-    axios.delete('http://localhost:8000/list/delete/' + listId)
-    .then((res) => {
-        console.log(res);
-        //TODO: Log a notifaction that the list was successfully deleted
+    }
+    try {
+      await axios.delete('http://localhost:8000/list/delete/' + listId)
+      const updatedUserData = [...userData];
+      const ind = updatedUserData.findIndex(e => {
+        return e.listId === listId;
       })
-    .catch(res => {
-        //TODO: Log a notifaction that the list was not successfully deleted
-    })
-    const list = userData;
-    const ind = list.findIndex(e => {
-      return e.listId === listId;
-    })
-    list.splice(ind, 1);
-    const first = columnOrder.slice(0, ind);
-    const last = columnOrder.slice(ind);
-    setColumnOrder([...first, ...last]);
+      updatedUserData.splice(ind, 1);
+      setUserData(updatedUserData)
+    } catch (error) {
+      console.log(error);
+    }
   }
   
-  const handleTitleChange = (e, id) => {
+  const handleTitleChange = async (e, id) => {
     if(e.type === 'blur') {
       axios.defaults.headers = {
         Authorization: Auth.getToken()
       }
-      axios.post('http://localhost:8000/list/update/' + id, {
-        title: e.target.value
-      }).then(
-        (res) => {
-          console.log(res);
-        }
-      ).catch(
-        // Display an error
-      )
+      try {
+        await axios.post('http://localhost:8000/list/update/' + id, {
+          title: e.target.value
+        })
+        const ind = userData.findIndex((e) => {
+          return e.listId === id;
+        });
+        const newList = [...userData];
+        newList[ind].listTitle = e.target.value;
+        setUserData(newList);
+      } catch (error) {
+        console.log(error);
+      }
     }
-    const ind = userData.findIndex((e) => {
-      return e.listId === id;
-    });
-    const newList = [...userData];
-    newList[ind].listTitle = e.target.value;
-    setUserData(newList);
   }
     return (
         <DragDropContext onDragEnd={onDragEnd}>
