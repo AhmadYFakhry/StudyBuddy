@@ -1,37 +1,25 @@
 import './Chat.css'
-import React from 'react';
+import React, {useState} from 'react';
 import Moment from 'react-moment';
 import { Form, FormControl } from 'react-bootstrap'
 import { ButtonBase, Grid } from '@material-ui/core';
 
+export default function Chat(props) {
 
-class Chat extends React.Component {
-  constructor(props) {
-    super();
-    this.props = props;
-    this.state = {
-      msg: "",
-      chat: [],
-    }
-    this.socket = this.props.socket
-  }
+  const [chat, setChat] = useState([]);
+  const [message, setMessage] = useState('');
+  
+  props.socket.on("message", (obj) => {
+    // Add new messages to existing messages in "chat"
+    setChat([...chat, {
+      username: obj.username,
+      msg: obj.msg,
+      createdAt: obj.createdAt
+    }])
+  });
 
-  componentDidMount = () => {
-    this.socket.on("message", (obj) => {
-      // Add new messages to existing messages in "chat"
-      console.log(obj);
-      this.setState({
-        chat: this.state.chat.concat({
-          username: obj.username,
-          msg: obj.msg,
-          createdAt: obj.createdAt
-        })
-      });
-    });
-  }
-
-  renderMessages() {
-    return this.state.chat.map((obj, index) => (
+  const renderMessages = () => {
+      return chat.map((obj, index) => (
       <div key={index}>
         <span className="username">{obj.username}: </span>
         <span className="message">{obj.msg} </span>
@@ -40,46 +28,39 @@ class Chat extends React.Component {
     ));
   }
 
-  updateMessage = e => {
-    this.setState({ msg: e.target.value });
-  };
-
-  handleMessageSubmit = (e) => {
-    e.preventDefault();
-    if (!this.state.msg.length <= 0) {
-      this.socket.emit("sendMessage", this.state.msg);
-      this.setState({ msg: "" });
-    }
-  };
-  render() {
-    return (
-      <div>
-        <div className="message-box">
-          <Form className="mb-3" onSubmit={this.handleMessageSubmit}>
-            <Grid container spacing={3} direction="row">
-              <Grid item lg={11} >
-                <FormControl
-                  placeholder="Your message"
-                  aria-label="Your message"
-                  aria-describedby="basic-addon2"
-                  className="message-inp"
-                  onChange={this.updateMessage}
-                  value={this.state.msg}
-                />
-              </Grid>
-                <Grid item lg={1} >
-                  <ButtonBase
-                    type="submit" className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium adjusted"
-                    disbaledElevation={true}>Send</ButtonBase>
-                </Grid>
+  return (
+    <div>
+      <div className="message-box">
+        <Form className="mb-3" onSubmit={e => {
+          e.preventDefault();
+          console.log(message.length)
+          if (message.length > 0) {
+            props.socket.emit("sendMessage", message);
+            setMessage("")
+          }
+        }}>
+          <Grid container spacing={3} direction="row">
+            <Grid item lg={11} >
+              <FormControl
+                placeholder="Your message"
+                aria-label="Your message"
+                aria-describedby="basic-addon2"
+                className="message-inp"
+                onChange={e => {
+                  setMessage(e.target.value);
+                }}
+                value={message}
+              />
             </Grid>
-
-          </Form>
-          <div className="messages">{this.renderMessages()}</div>
-        </div>
+              <Grid item lg={1} >
+                <ButtonBase
+                  type="submit" className="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeMedium adjusted"
+                  >Send</ButtonBase>
+              </Grid>
+          </Grid>
+        </Form>
+        <div className="messages">{renderMessages()}</div>
       </div>
-    );
-  }
+    </div>
+  )
 }
-
-export default Chat;
