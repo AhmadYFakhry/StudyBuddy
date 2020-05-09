@@ -27,6 +27,7 @@ const App = () => {
         <PrivateRoute exact path="/dashboard" component={Gateway} />
         <PrivateRoute exact path="/dashboard/group/auth" component={SocketAuth} />
         <PrivateRoute exact path="/dashboard/group/study" component={GroupStudy} />
+        <PrivateRoute exact path="/profile/:id" component={ProfilePage} />
       </Router>
     </div>
   )
