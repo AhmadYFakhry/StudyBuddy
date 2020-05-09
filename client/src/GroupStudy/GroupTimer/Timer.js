@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { Button, Grid } from '@material-ui/core';
 import { MdPlayArrow, MdPause, MdRefresh } from 'react-icons/md';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -19,20 +19,18 @@ export default function Timer(props) {
 
   let socket = props.socket;
 
-  useEffect(() => {
-    socket.on('play', (id) => {
-      if (id !== socket.id) start();
-    });
-    socket.on('pause', (id) => {
-      if (id !== socket.id) stop();
-    });
-    socket.on('reset', (id) => {
-      if (id !== socket.id) reset();
-    });
-    socket.on('switchModes', (id) => {
-      if (id !== socket.id) switchMode();
-    });
-  }, []);
+  socket.on('play', (id) => {
+    if (id !== socket.id) start();
+  });
+  socket.on('pause', (id) => {
+    if (id !== socket.id) stop();
+  });
+  socket.on('reset', (id) => {
+    if (id !== socket.id) reset();
+  });
+  socket.on('switchModes', (id) => {
+    if (id !== socket.id) switchMode();
+  });
 
   const handleClickPlay = () => {
     socket.emit('sendPlay');

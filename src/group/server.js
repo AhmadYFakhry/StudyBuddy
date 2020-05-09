@@ -41,7 +41,6 @@ io.on("connection", socket => {
   });
   socket.on("sendMessage", (msg) => {
       const user = getUser(socket.id);
-      console.log("hello");
       io.to(user.room).emit("message", generateMessage(msg, user.username));
   });
 
@@ -62,13 +61,11 @@ io.on("connection", socket => {
 
   socket.on("sendSwitchModes", () => {
     const user = getUser(socket.id)
-    console.log("test");
     io.to(user.room).emit("switchModes", socket.id);
   })
 
   socket.on("sendSwitchContinue", () => {
     const user = getUser(socket.id)
-    console.log("test");
     io.to(user.room).emit("switchContinue", socket.id);
   })
 
