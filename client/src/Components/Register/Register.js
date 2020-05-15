@@ -29,7 +29,8 @@ export default function RegistrationForm(props) {
         axios.post("http://localhost:8000/create/user", {
             name: nameState,
             email: emailState,
-            password: passwordState
+            password: passwordState,
+            completedTasks: 0,
         })
             .then(res => {
                 Cookies.set('Authorization', 'Bearer ' + res.data.tk);

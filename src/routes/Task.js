@@ -37,6 +37,7 @@ router.post('/task/update/:id', auth, async (req, res)  => {
 //An entry for a post request to create a task
 router.post('/task/create', auth, async (req, res) => {
     // const listid = req.body.listid;
+    req.body.name;
     const content = req.body.content;
     const listid = req.body.listid;
     const task =  new Task({

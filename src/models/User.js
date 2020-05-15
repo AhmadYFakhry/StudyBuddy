@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-  }]
+  }],
+  completedTasks: {
+    type: Number,
+  }
   // timestamps: true
 })
 
@@ -60,6 +63,16 @@ userSchema.statics.login = async (email, password) => {
   const isValid = await bcrypt.compare(password, user.password)
   if (!isValid) throw new Error("Unable to login");
   else return user;
+}
+
+userSchema.methods.toJSON = function () {
+  const user = this;
+  const userObject = user.toObject();
+
+  delete userObject.password;
+  delete userObject.tokens;
+
+  return userObject;
 }
 
 userSchema.virtual('userId').get(function() {

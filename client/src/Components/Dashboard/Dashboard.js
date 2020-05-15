@@ -46,7 +46,7 @@ class Dashboard extends React.Component {
             </div>
           </FullScreen>
         </div>
-        <SessionList id="sessionList" >
+        <SessionList id="sessionList" userId={Cookies.get('uid')} >
         </SessionList>
       </div>
     )

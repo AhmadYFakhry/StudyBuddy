@@ -14,7 +14,7 @@ const Container = styled.div`
   display: flex;
 `;
 
-export default function SessionList() {
+export default function SessionList(props) {
   const [userData, setUserData] = useState([]);
   const [columnOrder, setColumnOrder] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -89,20 +89,24 @@ export default function SessionList() {
   const createTask = async (e, content, listid) => {
     e.preventDefault();
     e.target.reset();
-    axios.defaults.headers = {
-      Authorization: Auth.getToken()
-    };
     try {
-      const res = await axios.post(`http://localhost:8000/task/create`, {
-        content,
-        listid
-      })
       const newUserData = [...userData];
       const ind = userData.findIndex((e) => {
-          return e.listId === listid;
+        return e.listId === listid;
+      });
+      axios.defaults.headers = {
+        Authorization: Auth.getToken()
+      };
+      let res = await axios.post(`http://localhost:8000/task/create`, {
+        content,
+        listid
       });
       newUserData[ind].tasks.push(res.data);
       setUserData(newUserData);
+      res = await axios.post(`http://localhost:8000/user/update/${props.userId}`, {
+        type: "inc"
+      });
+      console.log(res);
     } catch (error) {
       console.log(error)
     }
@@ -110,6 +114,19 @@ export default function SessionList() {
   
   const deleteTask = async (taskId, listId) => {
     try {
+      let startList = [...userData].filter((e) => {
+        return e.listId === listId;
+      })[0];
+    
+      const ind = startList.tasks.findIndex(e => {
+        return e._id === taskId;
+      })
+      startList.tasks.splice(ind, 1)
+      const listIndex = [...userData].findIndex(e => {
+        return e.listId === listId;
+      });
+      [...userData][listIndex] = startList;
+      setUserData([...userData]);
       axios.defaults.headers = {
         Authorization: Auth.getToken()
       }
@@ -117,19 +134,6 @@ export default function SessionList() {
     } catch (error) {
         console.log(error) 
     }
-    let startList = [...userData].filter((e) => {
-      return e.listId === listId;
-    })[0];
-  
-    const ind = startList.tasks.findIndex(e => {
-      return e._id === taskId;
-    })
-    startList.tasks.splice(ind, 1)
-    const listIndex = [...userData].findIndex(e => {
-      return e.listId === listId;
-    });
-    [...userData][listIndex] = startList;
-    setUserData([...userData]);
   }
   
   const createList = async () => { //add new list
@@ -194,8 +198,7 @@ export default function SessionList() {
             {provided => (
               <Container id="sessionList"
                 {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
+                ref={provided.innerRef}>
                 {columnOrder.map((e, index) => {
                   if(!userData[index]) return null;
                   const column = userData[index];

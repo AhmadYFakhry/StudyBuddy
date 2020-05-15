@@ -2,9 +2,9 @@ const express = require("express");
 const router = new express.Router();
 const auth = require('../middleware/auth')
 const User = require('../models/User')
-var nodemailer = require('nodemailer');
-const list = require('../models/List');
-const task = require('../models/Task');
+// var nodemailer = require('nodemailer');
+const List = require('../models/List');
+const Task = require('../models/Task');
 
 // Create an account
 router.post('/create/user', async (req, res, next) => {
@@ -27,31 +27,55 @@ router.post('/user/login', async (req, res) => {
         const tk = await user.genJWT();
         res.send({ user, tk })
     } catch (error) {
+        console.log(error);
         res.status(400).send();
     }
 
 });
-router.get('/:id', async (req, res) => { //might need to make multiple requests still needs to be worked on
-    const user =  await User.findOne(req.params.id)
-    const userLists = await list.find({userid: { user: userid } }).toArray()
-    const taskLists = await userLists.foreach()
-
-    User.findById(req.params.id)
-        .then(user => res.json(user))
-        .catch(err => res.status(400).json('Error: ' + err));
+router.get('/user/get/:id', async (req, res) => {
+    // console.log(req.params.id)
+    let lists = [];
+    const user = await User.findById(req.params.id);
+    // console.log(user);
+    const listIds = await List.find({userid: user._id});
+    for(let i = 0; i < listIds.length; i++) {
+        const tasks = await Task.find({ listid: listIds[i]._id });
+        const obj = {
+            listId: listIds[i]._id,
+            listTitle: listIds[i].title,
+            tasks
+        };
+        lists.push(obj);
+    }
+    console.log(lists);
 });
 
-router.post('/update/:id', auth, (req, res) => {
-    User.findById(req.params.id)
-        .then(user => {
-            user.name = req.body.name;
-            user.email = req.body.email;
-            user.tokens = req.body.tokens;
-            user.save()
-                .then(() => res.json('User Updated!'))
-                .catch(err => res.status(400).json('Error: ' + err));
-        })
-        .catch(err => res.status(400).json('Error: ' + err));
+router.post('/user/update/:id', auth, (req, res) => {
+    console.log(req.body)
+    try {
+        if(req.body.type === 'inc') {
+            const user = User.findById(req.params.id);
+            console.log(user);
+            User.findByIdAndUpdate(req.params.id, {
+                completedTasks: user.completedTasks++
+            })
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    // if(req.body.completedTasks) {
+    //     console.log(req.body.completedTasks);
+    // }
+    // if(req.)
+    // User.findById(req.params.id)
+    //     .then(user => {
+    //         user.name = req.body.name;
+    //         user.email = req.body.email;
+    //         user.save()
+    //             .then(() => res.json('User Updated!'))
+    //             .catch(err => res.status(400).json('Error: ' + err));
+    //     })
+    //     .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.post('/user/logout', auth, async (req, res) => {
