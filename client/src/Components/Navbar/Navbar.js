@@ -60,12 +60,12 @@ export default class Navbar extends Component {
             </a>
           </li>
 
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a href={`/profile/${this.props.userId}`} className="nav-link">
               <i class="fas fa-user-circle"></i>
               <span className="link-text">Profile</span>
             </a>
-          </li>
+          </li> */}
           <li className="nav-item">
             <a href="/dashboard" className="nav-link">
               <i class="fas fa-columns"></i>
