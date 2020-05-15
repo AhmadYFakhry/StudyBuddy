@@ -22,7 +22,6 @@ router.post('/list/create', auth, async (req, res) => {
     }
     )
     .catch(err => {
-        console.log(err)
         res.status(400).json('Error: ' + err);
     })
 });
@@ -47,7 +46,6 @@ router.get('/list/getAll/', auth, async (req, res) => {
         // console.log(lists);
         res.status(200).send({lists});
     } catch (error) {
-        console.log(error);
         res.status(404).send("Error: list not found")
     }
 });
@@ -59,6 +57,17 @@ router.delete('/list/delete/:id', auth, async (req, res) => {
             listid: req.params.id
         })
         await List.findByIdAndDelete(req.params.id);
+        res.status(200).send();
+    } catch (error) {
+        res.status(404).send();
+    }
+})
+
+router.post('/list/update/:id', auth, async (req, res) => {
+    try {
+        await List.findByIdAndUpdate(req.params.id, {
+            title: req.body.title
+        })
         res.status(200).send();
     } catch (error) {
         res.status(404).send();

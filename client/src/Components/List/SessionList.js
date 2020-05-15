@@ -1,97 +1,74 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Column from './column';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import axios from 'axios';
 import Auth from '../../HOC/Auth'
-import {Form} from 'react-bootstrap';
+import { Grid } from '@material-ui/core';
 import './List.css'
-import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 
 const Container = styled.div`
   display: flex;
 `;
-class SessionList extends React.Component {
-  constructor(props){
-    super(props);
-    this.createTask = this.createTask.bind(this);
-    // this.createList = this.createList.bind(this);
-    this.deleteTask = this.deleteTask.bind(this);
-    this.createList = this.createList.bind(this);
-    this.deleteList = this.deleteList.bind(this);
-    this.handleListChange = this.handleListChange.bind(this)
-  }
-  state = {
-    userData: [],
-    newList: '',
-    user: '',
-    columnOrder: []
+
+export default function SessionList() {
+  const [userData, setUserData] = useState([]);
+  const [columnOrder, setColumnOrder] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      axios.defaults.headers = {
+        Authorization: Auth.getToken()
+      }  
+      const res = await axios.get(`http://localhost:8000/list/getAll`);
+      setUserData(res.data.lists);
+      setLoading(false);
     }
+    fetchData();
+  }, []);
 
-  componentDidMount() {
-    axios.defaults.headers = {
-      Authorization: Auth.getToken()
-    }  
-    axios.get(`http://localhost:8000/list/getAll`)
-    .then(res => {
-      this.setState({userData: res.data.lists})
-      // console.log(res.data.lists);
-      const test = this.state.userData.map(e => {
-        return e.listId;
-      });
-      this.setState({columnOrder: test})
-      console.log('BEFORE', this.state.columnOrder);
-      });
-  }
+  useEffect(() => {
+    const updatedOrder = userData.map(e => e.listId);
+    setColumnOrder(updatedOrder);
+  }, [userData])
 
-  componentWillUnmount() {
-
-  }
-
-  onDragEnd = result => {
+  const onDragEnd = result => {
     const { destination, source, draggableId, type } = result;
     if(!destination) {
       return;
     }
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    ) {
-      return;
-    }
+    if (destination.droppableId === source.droppableId && destination.index === source.index) return;
     if (type === 'column') {
-      console.log(source.index);
-      console.log(destination.index);
-      const newColumnOrder = [...this.state.columnOrder];
-      [newColumnOrder[source.index], newColumnOrder[destination.index]] = [newColumnOrder[destination.index], newColumnOrder[source.index]];
-
-      const data = [...this.state.userData];
+      const data = [...userData];
       [data[source.index], data[destination.index]] = [data[destination.index], data[source.index]];
-
-      this.setState({
-        columnOrder: newColumnOrder,
-        userData: data
-      });
-      console.log('AFTER', this.state.columnOrder);
+      setUserData(data);
       return;
     }
+
     const start = source.droppableId;
     const finish = destination.droppableId;
+
     if(start === finish) {
-      const list = this.state.userData.filter((e) => {
-        return e.listId === start;
-      });
-      const tasks = list[0].tasks;
+      const list = [...userData.filter((e) => e.listId === start)]
+      const tasks = [...list[0].tasks];
+      console.log(source.index, destination.index);
       [tasks[source.index], tasks[destination.index]] = [tasks[destination.index], tasks[source.index]];
 
-      const newUserData = [...this.state.userData];
+      const newUserData = [...userData];
       const ind = newUserData.findIndex((e) => {
          return e.listId === start;
       });
       newUserData[ind].tasks = tasks;
+      setUserData(newUserData);
       return;
     }
-    let startList = this.state.userData.filter((e) => {
+
+    let startList = userData.filter((e) => {
       return e.listId === start;
     })[0];
     const tasks = startList.tasks;
@@ -99,7 +76,7 @@ class SessionList extends React.Component {
       return e._id === draggableId
     })[0];
 
-    const finishList = this.state.userData.filter((e) => {
+    const finishList = userData.filter((e) => {
       return e.listId === finish;
     })[0];
     const ind = startList.tasks.findIndex(e => {
@@ -109,143 +86,147 @@ class SessionList extends React.Component {
     finishList.tasks.push(task);
   };
 
-createTask(e, content, listid){
-  e.preventDefault();
-  e.target.reset();
-  axios.defaults.headers = {
-    Authorization: Auth.getToken()
-  };
-  axios.post(`http://localhost:8000/task/create`, {
-    content,
-    listid
-  })
-    .then(res => {
-      const newUserData = [...this.state.userData];
-      const ind = newUserData.findIndex((e) => {
-         return e.listId === listid;
+  const createTask = async (e, content, listid) => {
+    e.preventDefault();
+    e.target.reset();
+    axios.defaults.headers = {
+      Authorization: Auth.getToken()
+    };
+    try {
+      const res = await axios.post(`http://localhost:8000/task/create`, {
+        content,
+        listid
+      })
+      const newUserData = [...userData];
+      const ind = userData.findIndex((e) => {
+          return e.listId === listid;
       });
       newUserData[ind].tasks.push(res.data);
-      this.setState({userData: newUserData});
-    })
-}  
-
-deleteTask(taskId, listId){
-
-  let startList = this.state.userData.filter((e) => {
-    return e.listId === listId;
-  })[0];
-
-  const ind = startList.tasks.findIndex(e => {
-    return e._id === taskId;
-  })
-  startList.tasks.splice(ind, 1)
-  this.setState({});
-  axios.defaults.headers = {
-    Authorization: Auth.getToken()
-}     
-  axios.delete('http://localhost:8000/task/delete/' + taskId).then(res => {
-    console.log(res.body)
-  }).catch(e => {
-    console.log(e);
-  })
-}
-
-handleListChange(event) {
-  this.setState({newList: event.target.value});
-}
-
-createList(e){ //add new list
-  e.target.reset();
-  e.preventDefault();
-  axios.defaults.headers = {
-    Authorization: Auth.getToken()
-}     
-  axios.post('http://localhost:8000/list/create', {
-    title: this.state.newList,
-  })
-  .then(res => {
-    console.log(res.data);
-    const newList = {
-      listId: res.data._id,
-      listTitle: res.data.title,
-      tasks: []
+      setUserData(newUserData);
+    } catch (error) {
+      console.log(error)
     }
-    this.setState({userData: [
-      ...this.state.userData,
-      newList
-    ]});
-    console.log(this.state.userData);
-    const test = this.state.userData.map(e => {
-      return e.listId;
+  }  
+  
+  const deleteTask = async (taskId, listId) => {
+    try {
+      axios.defaults.headers = {
+        Authorization: Auth.getToken()
+      }
+      await axios.delete('http://localhost:8000/task/delete/' + taskId);
+    } catch (error) {
+        console.log(error) 
+    }
+    let startList = [...userData].filter((e) => {
+      return e.listId === listId;
+    })[0];
+  
+    const ind = startList.tasks.findIndex(e => {
+      return e._id === taskId;
+    })
+    startList.tasks.splice(ind, 1)
+    const listIndex = [...userData].findIndex(e => {
+      return e.listId === listId;
     });
-    this.setState({columnOrder: test})
-  })
-}
-
-
-deleteList(listId){ //delete the list permanently
-  const list = this.state.userData;
-  const ind = list.findIndex(e => {
-    return e.listId === listId;
-  })
-  console.log(ind);
-  this.state.userData.splice(ind, 1);
-  const first = this.state.columnOrder.slice(0, ind);
-  const last = this.state.columnOrder.slice(ind);
-  console.log(first, last)
-  this.setState({
-    columnOrder: [...first, ...last]
-  })
-  // this.setState({})
-  // axios.defaults.headers = {
-  //   Authorization: Auth.getToken()
-  // }     
-  // axios.post('http://localhost:8000/list/delete' + listId)
-}
-
-  render() {
-    return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
-        <div className="list-controls">
-        <Form action="submit" onSubmit={e => this.createList(e)}>
-          <Form.Control
-            placeholder="List Name"
-            aria-label="List Name"
-            aria-describedby="basic-addon1"
-            onChange={this.handleListChange}
-          />
-          <br />
-          <Button variant="contained" type="submit">Add List</Button>
-        </Form>
-        </div>
-        <Droppable droppableId="all-columns" direction="horizontal" type="column">
-          {provided => (
-            <Container id="sessionList"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {this.state.columnOrder.map((e, index) => {
-                const column = this.state.userData[index];
-                console.log(index, column)
-                const tasks = column.tasks;
-                //maps the created lists 
-                return <Column 
-                  key={column.listId} 
-                  column={column} 
-                  tasks={tasks} 
-                  index={index} 
-                  createTask={this.createTask} 
-                  deleteTask={this.deleteTask}
-                  deleteList={this.deleteList} />;
-              })}
-              {provided.placeholder}
-            </Container>
-          )}
-        </Droppable>
-
-      </DragDropContext>
-    );
+    [...userData][listIndex] = startList;
+    setUserData([...userData]);
   }
-}
-
-export default SessionList;
+  
+  const createList = async () => { //add new list
+    axios.defaults.headers = {
+      Authorization: Auth.getToken()
+    }
+    try {
+      const res = await axios.post('http://localhost:8000/list/create', {
+        title: 'List Title',
+      })
+      const newList = {
+        listId: res.data._id,
+        listTitle: 'List Title',
+        tasks: []
+      }
+      setUserData([...userData, newList]);
+    } catch (error) {
+      console.log(error);
+    }     
+  }
+  
+  const deleteList = async (listId) => { //delete the list permanently
+    axios.defaults.headers = {
+      Authorization: Auth.getToken()
+    }
+    try {
+      await axios.delete('http://localhost:8000/list/delete/' + listId)
+      const updatedUserData = [...userData];
+      const ind = updatedUserData.findIndex(e => {
+        return e.listId === listId;
+      })
+      updatedUserData.splice(ind, 1);
+      setUserData(updatedUserData)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+  const handleTitleChange = async (e, id) => {
+    if(e.type === 'blur') {
+      axios.defaults.headers = {
+        Authorization: Auth.getToken()
+      }
+      try {
+        await axios.post('http://localhost:8000/list/update/' + id, {
+          title: e.target.value
+        })
+        const ind = userData.findIndex((e) => {
+          return e.listId === id;
+        });
+        const newList = [...userData];
+        newList[ind].listTitle = e.target.value;
+        setUserData(newList);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+    return (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="all-columns" direction="horizontal" type="column">
+            {provided => (
+              <Container id="sessionList"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {columnOrder.map((e, index) => {
+                  if(!userData[index]) return null;
+                  const column = userData[index];
+                  const tasks = column.tasks;
+                  return <Column 
+                    key={column.listId}
+                    id={column.listId} 
+                    column={column} 
+                    tasks={tasks} 
+                    index={index} 
+                    createTask={createTask} 
+                    deleteTask={deleteTask}
+                    deleteList={deleteList}
+                    updateListName={handleTitleChange}/>;
+                })}
+                {provided.placeholder}
+                {loading? (
+                <Grid container alignItems="center" justify="center" spacing={1}>
+                  <Grid item>
+                    <CircularProgress color="inherit" />
+                  </Grid>
+                </Grid>): (
+                  <IconButton className="test" onClick={createList}>
+                    <AddBoxIcon fontSize="large"></AddBoxIcon>
+                  </IconButton>
+                )}
+              </Container>
+            )}
+          </Droppable>
+        </DragDropContext>
+      );   
+    }
+  
+          

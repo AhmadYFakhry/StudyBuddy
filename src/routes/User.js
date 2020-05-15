@@ -9,7 +9,6 @@ const task = require('../models/Task');
 // Create an account
 router.post('/create/user', async (req, res, next) => {
     const user = new User(req.body);
-    console.log(user);
     try {
         const tk = await user.genJWT();
         await user.save();
@@ -18,35 +17,8 @@ router.post('/create/user', async (req, res, next) => {
             tk
         });
     } catch (error) {
-        console.log(error);
         res.status(400).send(error);
     }
-});
-// Send email to the new user
-router.post('/send', async (req, res, next) => {
-    var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'studdybuddycsc301@gmail.com',
-          pass: 'Studdy123'
-        }
-      });
-
-    var mailOptions = {
-        from: 'studdybuddycsc301@gmail.com',
-        to: req.body.email,
-        subject: 'Welcome to StuddyBuddy!',
-        text: `Hi `+req.body.name+`, thank you for registering with Studdy Buddy! This is a confirmation email
-        to ensure you have registered with us. Welcome :)`
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
 });
 // login to an existing account
 router.post('/user/login', async (req, res) => {
@@ -55,7 +27,6 @@ router.post('/user/login', async (req, res) => {
         const tk = await user.genJWT();
         res.send({ user, tk })
     } catch (error) {
-        console.log(error);
         res.status(400).send();
     }
 
@@ -89,7 +60,6 @@ router.post('/user/logout', auth, async (req, res) => {
         await req.user.save();
         res.status(200).send()
     } catch (error) {
-        console.log(error);
         res.status(500).send();
 
     }

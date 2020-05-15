@@ -13,3 +13,23 @@
     display: inline;
     justify-content: space-evenly;
 }
+
+.MuiCircularProgress-root {
+    color: white;
+    height: 4rem !important;
+    width: 4rem !important;
+}
+
+.MuiSvgIcon-fontSizeLarge {
+    height: 4rem !important;
+    width: 4rem !important;
+}
+
+.test {
+    color: #d5dcf8 !important;
+    margin: auto 0 !important;
+}
+
+.test:disabled {
+    display: none;
+}
